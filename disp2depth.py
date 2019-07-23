@@ -4,7 +4,7 @@ from file_utilities import load_obj
 import cv2
 
 while True:
-    disp = load_obj("disp_1")
+    disp = load_obj("../PDE_ssd_matching/disp_1")
     baseline = 0.2
     angle = np.zeros((512, 1024))
     angle2 = np.zeros((512, 1024))
@@ -19,7 +19,7 @@ while True:
     depth = np.zeros_like(disp).astype(np.float)
     depth[mask] = (angle[mask] / np.tan(disp[mask] / 180 * math.pi)) + angle2[mask]
 
-    np.save("depth_est", depth)
+    # np.save("depth_est", depth)
     cv2.imshow("depth", depth)
     cv2.waitKey(0)
     break

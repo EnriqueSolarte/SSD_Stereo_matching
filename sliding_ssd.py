@@ -8,13 +8,19 @@ import math
 from tqdm import tqdm
 
 
-def stereo_match(up_img, down_img, kernel, max_offset, baseline):
-    # Load in both images, assumed to be RGBA 8bit per channel images
+def stereo_match(up_img, down_img, kernel, max_offset):
+
+    assert up_img.shape == down_img.shape
+
+    if len(up_img.shape) > 2:
+        up_img = cv2.cvtColor(up_img, cv2.COLOR_RGB2GRAY)
+        down_img = cv2.cvtColor(down_img, cv2.COLOR_RGB2GRAY)
+
+    # Load in both images
     up_img = np.asarray(up_img)
     # cv2.imshow("left", left)
     down_img = np.asarray(down_img)
-    # cv2.imshow("right", right)
-    # cv2.waitKey(0)
+
     h, w = up_img.shape  # assume that both images are same size
 
     # Depth (or disparity) map
@@ -59,6 +65,7 @@ def stereo_match(up_img, down_img, kernel, max_offset, baseline):
         save_obj("disp_1", disp)
 
     tbar.close()
+    return disp
 
 
 if __name__ == '__main__':
@@ -76,7 +83,9 @@ if __name__ == '__main__':
     rgb_map_up = cv2.imread(os.path.join(dir_rgb_map_up, list_rgb_maps_up[i]))
     rgb_map_down = cv2.imread(os.path.join(dir_rgb_map_down, list_rgb_maps_down[i]))
 
+
+
     img_up = cv2.cvtColor(rgb_map_up, cv2.COLOR_BGR2GRAY)
     img_down = cv2.cvtColor(rgb_map_down, cv2.COLOR_BGR2GRAY)
     baseline = 0.2
-    stereo_match(img_up, img_down, 6, 70, baseline)  # 6x6 local search kernel, 30 pixel search range
+    stereo_match(img_up, img_down, 6, 70)
